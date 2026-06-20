@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A personal anime tracking list with ratings, progress, favorites, and notes.">
+  <meta name="theme-color" content="#0a0912">
+  <title>My Anime List</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Decorative background elements are presentational only. -->
+  <div class="background-effects" aria-hidden="true">
+    <div class="orb orb-one"></div>
+    <div class="orb orb-two"></div>
+    <div class="grid-lines"></div>
+  </div>
+
+  <!-- Shared site header and view navigation. -->
+  <header class="site-header">
+    <nav class="navbar container" aria-label="Primary navigation">
+      <a class="brand" href="#list" data-view-link="list" aria-label="My Anime List home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" role="img">
+            <path d="M16 3 28 10v12l-12 7L4 22V10l12-7Z"></path>
+            <path d="m10 17 4 4 8-10"></path>
+          </svg>
+        </span>
+        <span>
+          <span class="brand-title">My Anime List</span>
+          <span class="brand-subtitle">Personal watch archive</span>
+        </span>
+      </a>
+
+      <button class="menu-toggle" id="menuToggle" type="button" aria-expanded="false" aria-controls="navLinks">
+        <span class="sr-only">Toggle navigation</span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="nav-links" id="navLinks">
+        <a class="nav-link active" href="#list" data-view-link="list">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"></path></svg>
+          Anime List
+        </a>
+        <a class="nav-link" href="#admin" data-view-link="admin">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5A3.5 3.5 0 1 0 12 8a3.5 3.5 0 0 0 0 7.5Z"></path><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-2.83 2.83-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V21h-4v-.08A1.7 1.7 0 0 0 8.94 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06-2.83-2.83.06-.06A1.7 1.7 0 0 0 4.57 15a1.7 1.7 0 0 0-1.56-1.03H3v-4h.08A1.7 1.7 0 0 0 4.6 8.94a1.7 1.7 0 0 0-.34-1.88L4.2 7l2.83-2.83.06.06A1.7 1.7 0 0 0 9 4.57a1.7 1.7 0 0 0 1.03-1.56V3h4v.08A1.7 1.7 0 0 0 15.06 4.6a1.7 1.7 0 0 0 1.88-.34L17 4.2 19.83 7l-.06.06A1.7 1.7 0 0 0 19.43 9a1.7 1.7 0 0 0 1.56 1.03H21v4h-.08A1.7 1.7 0 0 0 19.4 15Z"></path></svg>
+          Admin Area
+        </a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- PUBLIC VIEW: Visitors can browse this section but cannot edit entries. -->
+    <section class="app-view active" id="listView" data-view="list">
+      <div class="container">
+        <section class="hero">
+          <div class="hero-copy">
+            <div class="eyebrow"><span class="pulse-dot"></span> The watchlist is online</div>
+            <h1>Stories watched.<br><span>Moments remembered.</span></h1>
+            <p>A curated record of every adventure, heartbreak, tournament arc, and “just one more episode” decision.</p>
+            <div class="hero-actions">
+              <a class="button button-primary" href="#collection">
+                Explore the list
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+              </a>
+              <button class="button button-ghost" id="randomPickButton" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5"></path></svg>
+                Random pick
+              </button>
+            </div>
+          </div>
+
+          <div class="hero-visual" aria-hidden="true">
+            <div class="orbit orbit-large"></div>
+            <div class="orbit orbit-small"></div>
+            <div class="hero-card hero-card-back">
+              <span>PLAN TO WATCH</span>
+              <strong id="heroPlanCount">0</strong>
+              <small>next adventures</small>
+            </div>
+            <div class="hero-card hero-card-main">
+              <div class="hero-card-icon">★</div>
+              <span>CURRENT MOOD</span>
+              <strong>Episode<br>after episode</strong>
+              <div class="mini-progress"><span></span></div>
+            </div>
+            <div class="spark spark-one">✦</div>
+            <div class="spark spark-two">✧</div>
+          </div>
+        </section>
+
+        <!-- Summary statistics are calculated from the current anime data. -->
+        <section class="stats-grid" aria-label="Anime list statistics">
+          <article class="stat-card">
+            <div class="stat-icon purple"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5Z"></path><path d="m10 9 5 3-5 3V9Z"></path></svg></div>
+            <div><strong id="totalCount">0</strong><span>Total anime</span></div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-icon cyan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h14v18H5z"></path><path d="M9 7h6M9 11h6M9 15h4"></path></svg></div>
+            <div><strong id="episodeCount">0</strong><span>Episodes logged</span></div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-icon pink"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.8 5.67 6.2.9-4.5 4.38 1.06 6.18L12 17.2l-5.55 2.92 1.06-6.18L3 9.57l6.22-.9L12 3Z"></path></svg></div>
+            <div><strong id="averageRating">0</strong><span>Average rating</span></div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-icon gold"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8l1.1 1.1L12 21l7.8-7.5 1.1-1.1a5.5 5.5 0 0 0-.1-7.8Z"></path></svg></div>
+            <div><strong id="favoriteCount">0</strong><span>All-time favorites</span></div>
+          </article>
+        </section>
+
+        <section class="collection-section" id="collection">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow-text">THE ARCHIVE</span>
+              <h2>Anime collection</h2>
+            </div>
+            <p id="resultSummary" aria-live="polite">Showing all anime</p>
+          </div>
+
+          <!-- Search, filter, and sort controls for the public list. -->
+          <div class="filter-panel">
+            <label class="search-field" for="searchInput">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+              <input id="searchInput" type="search" placeholder="Search by anime title..." autocomplete="off">
+              <kbd>/</kbd>
+            </label>
+
+            <div class="status-filters" id="statusFilters" aria-label="Filter by status">
+              <button class="filter-chip active" type="button" data-status="All">All</button>
+              <button class="filter-chip" type="button" data-status="Watching">Watching</button>
+              <button class="filter-chip" type="button" data-status="Completed">Completed</button>
+              <button class="filter-chip" type="button" data-status="On Hold">On Hold</button>
+              <button class="filter-chip" type="button" data-status="Dropped">Dropped</button>
+              <button class="filter-chip" type="button" data-status="Plan to Watch">Plan to Watch</button>
+            </div>
+
+            <div class="sort-row">
+              <label for="sortSelect">Sort by</label>
+              <div class="select-wrap">
+                <select id="sortSelect">
+                  <option value="title-asc">Title: A–Z</option>
+                  <option value="title-desc">Title: Z–A</option>
+                  <option value="rating-desc">Rating: High to low</option>
+                  <option value="rating-asc">Rating: Low to high</option>
+                  <option value="progress-desc">Progress: High to low</option>
+                  <option value="progress-asc">Progress: Low to high</option>
+                </select>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"></path></svg>
+              </div>
+              <button class="text-button" id="resetFiltersButton" type="button">Reset filters</button>
+            </div>
+          </div>
+
+          <div class="anime-grid" id="animeGrid"></div>
+
+          <div class="empty-state" id="emptyState" hidden>
+            <div class="empty-icon">?</div>
+            <h3>No anime found</h3>
+            <p>Try a different search or clear the current filters.</p>
+            <button class="button button-secondary" id="emptyResetButton" type="button">Clear filters</button>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <!--
+      ADMIN VIEW: This is a browser-only editing prototype, NOT a secure admin page.
+      Anyone who can open the site can reach this section and localStorage is editable.
+      Replace this area with Firebase or Supabase authentication and per-user database
+      rules before using it for private accounts or real multi-user data.
+    -->
+    <section class="app-view" id="adminView" data-view="admin" hidden>
+      <div class="container admin-container">
+        <section class="admin-hero">
+          <div>
+            <div class="eyebrow"><span class="pulse-dot amber"></span> Local prototype mode</div>
+            <h1>Collection studio</h1>
+            <p>Add, edit, and export entries stored only in this browser.</p>
+          </div>
+          <button class="button button-secondary" id="exportButton" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"></path></svg>
+            Export JSON
+          </button>
+        </section>
+
+        <div class="security-notice" role="note">
+          <div class="notice-icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 9v4M12 17h.01"></path><path d="M10.3 3.8 2.2 18a2 2 0 0 0 1.74 3h16.12a2 2 0 0 0 1.74-3L13.7 3.8a2 2 0 0 0-3.4 0Z"></path></svg>
+          </div>
+          <div>
+            <strong>This is not real security—yet.</strong>
+            <p>This admin area and its localStorage data are visible to anyone using this browser. A future version should use Firebase or Supabase authentication, protected database rules, and user-owned records.</p>
+          </div>
+        </div>
+
+        <div class="admin-layout">
+          <section class="form-card">
+            <div class="card-heading">
+              <div>
+                <span class="eyebrow-text">ENTRY EDITOR</span>
+                <h2 id="formHeading">Add an anime</h2>
+              </div>
+              <span class="edit-badge" id="editBadge" hidden>Editing</span>
+            </div>
+
+            <form id="animeForm">
+              <input type="hidden" id="animeId">
+
+              <div class="form-grid">
+                <label class="form-field full-width">
+                  <span>Title <b>*</b></span>
+                  <input id="titleInput" name="title" type="text" placeholder="e.g. Frieren: Beyond Journey's End" required>
+                </label>
+
+                <label class="form-field full-width">
+                  <span>Image URL</span>
+                  <input id="imageInput" name="image" type="url" placeholder="https://example.com/cover.jpg">
+                  <small>Leave blank to use a generated cover placeholder.</small>
+                </label>
+
+                <label class="form-field">
+                  <span>Status <b>*</b></span>
+                  <div class="select-wrap">
+                    <select id="statusInput" name="status" required>
+                      <option value="Watching">Watching</option>
+                      <option value="Completed">Completed</option>
+                      <option value="On Hold">On Hold</option>
+                      <option value="Dropped">Dropped</option>
+                      <option value="Plan to Watch">Plan to Watch</option>
+                    </select>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"></path></svg>
+                  </div>
+                </label>
+
+                <label class="form-field">
+                  <span>Rating <b>*</b></span>
+                  <input id="ratingInput" name="rating" type="number" min="0" max="10" step="0.1" value="0" required>
+                </label>
+
+                <label class="form-field">
+                  <span>Current episode <b>*</b></span>
+                  <input id="currentEpisodeInput" name="currentEpisode" type="number" min="0" value="0" required>
+                </label>
+
+                <label class="form-field">
+                  <span>Total episodes <b>*</b></span>
+                  <input id="totalEpisodesInput" name="totalEpisodes" type="number" min="0" value="12" required>
+                </label>
+
+                <label class="form-field full-width">
+                  <span>Genres</span>
+                  <input id="genresInput" name="genres" type="text" placeholder="Fantasy, Adventure, Drama">
+                  <small>Separate each genre with a comma.</small>
+                </label>
+
+                <label class="form-field full-width">
+                  <span>Personal notes</span>
+                  <textarea id="notesInput" name="notes" rows="4" placeholder="What stood out? Favorite arc? Thoughts for future you?"></textarea>
+                </label>
+
+                <label class="favorite-toggle full-width">
+                  <input id="favoriteInput" name="favorite" type="checkbox">
+                  <span class="toggle-box"><span></span></span>
+                  <span>
+                    <strong>Mark as a favorite</strong>
+                    <small>Favorites receive a highlighted card on the public list.</small>
+                  </span>
+                </label>
+              </div>
+
+              <div class="form-actions">
+                <button class="button button-primary" id="saveButton" type="submit">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"></path></svg>
+                  Add anime
+                </button>
+                <button class="button button-ghost" id="clearFormButton" type="button">Clear form</button>
+              </div>
+            </form>
+          </section>
+
+          <aside class="admin-side">
+            <section class="preview-card">
+              <div class="card-heading compact">
+                <div>
+                  <span class="eyebrow-text">LIVE PREVIEW</span>
+                  <h2>Card preview</h2>
+                </div>
+              </div>
+              <div id="formPreview"></div>
+            </section>
+
+            <section class="future-card">
+              <div class="future-icon">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M2 12h20"></path><circle cx="12" cy="12" r="8"></circle></svg>
+              </div>
+              <div>
+                <strong>Built for the next chapter</strong>
+                <p>The data model includes stable IDs and timestamps so it can later gain user accounts, public/private profiles, follows, and list comparison.</p>
+              </div>
+            </section>
+          </aside>
+        </div>
+
+        <section class="manage-section">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow-text">LOCAL LIBRARY</span>
+              <h2>Manage entries</h2>
+            </div>
+            <p id="adminCount">0 entries stored</p>
+          </div>
+          <div class="manage-list" id="manageList"></div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div>
+        <span class="brand-title">My Anime List</span>
+        <p>Made for the stories that stay with us.</p>
+      </div>
+      <p class="footer-note">Static prototype · Data saved locally in your browser</p>
+    </div>
+  </footer>
+
+  <!-- Brief status messages for saves, deletes, and exports. -->
+  <div class="toast" id="toast" role="status" aria-live="polite">
+    <span class="toast-icon">✓</span>
+    <span id="toastMessage">Saved</span>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
